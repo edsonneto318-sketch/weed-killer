@@ -5,160 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgroDrone Target - Manejo Inteligente 🚁🌱</title>
     <style>
-        /* Estilos Globais UI */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-        
-        :root {
-            --primary: #27ae60;
-            --secondary: #2ecc71;
-            --dark: #2c3e50;
-            --light: #ecf0f1;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #e8f5e9;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: var(--dark);
-        }
-
-        .app-container {
-            background: #fff;
-            width: 90%;
-            max-width: 600px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .header {
-            background: var(--primary);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: 600;
-        }
-
-        .step {
-            display: none;
-            padding: 30px;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .step.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            font-size: 0.9em;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #bdc3c7;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
-        }
-
-        /* Dica / Placeholder Transparente */
-        input::placeholder {
-            color: #bdc3c7;
-            opacity: 0.7;
-        }
-
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.1s;
-            font-weight: 600;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
+        :root { --primary: #27ae60; --secondary: #2ecc71; --dark: #2c3e50; --light: #ecf0f1; --danger: #e74c3c; --warning: #f39c12; }
+        body { font-family: 'Poppins', sans-serif; background-color: #e8f5e9; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--dark); }
+        .app-container { background: #fff; width: 95%; max-width: 700px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); overflow: hidden; margin: 20px 0; }
+        .header { background: var(--primary); color: white; padding: 20px; text-align: center; font-size: 1.4em; font-weight: 600; }
+        .step { display: none; padding: 25px; animation: fadeIn 0.4s ease; }
+        .step.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .input-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9em; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 1em; }
+        input:focus, select:focus { outline: none; border-color: var(--primary); }
+        .btn { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; font-size: 1.1em; cursor: pointer; font-weight: 600; margin-top: 10px; transition: 0.2s; }
         .btn:hover { background: #219653; }
-        .btn:active { transform: scale(0.98); }
-        .btn-secondary { background: #7f8c8d; margin-top: 10px; }
+        .btn-secondary { background: #95a5a6; }
+        
+        /* Painel de Voo */
+        .flight-panel { background: #f8f9fa; border-left: 5px solid gray; padding: 15px; margin-top: 15px; border-radius: 4px; display: none; }
+        .status-badge { display: inline-block; padding: 5px 10px; border-radius: 4px; color: white; font-weight: bold; margin-bottom: 10px;}
+        
+        /* Imagem da Daninha */
+        .img-container { text-align: center; margin-top: 15px; display: none; }
+        .img-container img { max-width: 100%; max-height: 250px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .img-caption { font-size: 0.8em; color: #7f8c8d; margin-top: 5px; }
 
-        /* Estilos do Relatório Final (Print e Tela) */
-        #relatorio-final {
-            font-family: 'Times New Roman', Times, serif !important;
-            font-size: 12pt;
-            color: black;
-            padding: 20px;
-        }
-
-        .bloco-relatorio {
-            border: 1px solid #000;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            background: #fafafa;
-        }
-
-        .bloco-relatorio h3 {
-            margin-top: 0;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-            font-size: 14pt;
-        }
-
-        .bloco-destaque {
-            background-color: #e8f5e9;
-            border-color: var(--primary);
-        }
-
-        .footer-print {
-            text-align: center;
-            font-size: 10pt;
-            color: #555;
-            margin-top: 20px;
-            font-style: italic;
-        }
-
+        /* Estilo Impressão (Relatório Final) */
+        #relatorio-final { font-family: 'Times New Roman', Times, serif; font-size: 12pt; color: black; display: none; }
+        .bloco { border: 1px solid #000; padding: 15px; margin-bottom: 15px; background: #fafafa; border-radius: 4px; }
+        .bloco h3 { margin-top: 0; border-bottom: 1px solid #ccc; padding-bottom: 5px; font-size: 14pt; }
+        .footer-print { text-align: center; font-size: 10pt; font-style: italic; color: #555; }
         .hidden { display: none !important; }
 
         @media print {
             body * { visibility: hidden; }
-            #step4, #step4 * { visibility: visible; }
-            #step4 { position: absolute; left: 0; top: 0; width: 100%; }
+            .app-container { box-shadow: none; width: 100%; max-width: 100%; margin: 0; padding: 0; }
+            #step5, #relatorio-final, #relatorio-final * { visibility: visible; }
+            #relatorio-final { display: block; position: absolute; left: 0; top: 0; width: 100%; padding: 20px; box-sizing: border-box;}
             .no-print { display: none !important; }
-            .app-container { box-shadow: none; width: 100%; }
-            #relatorio-final { padding: 0; }
         }
     </style>
 </head>
@@ -170,16 +54,16 @@
     <div id="step1" class="step active">
         <h3>📋 Passo 1: Identificação</h3>
         <div class="input-group">
-            <label>👨‍✈️ Piloto / Profissional</label>
-            <input type="text" id="piloto" placeholder="Ex: João da Silva">
+            <label>👨‍💼 Profissional Responsável</label>
+            <input type="text" id="profissional" placeholder="Ex: Eng. Agrônomo Carlos Mendes">
         </div>
         <div class="input-group">
-            <label>🚜 Nome da Fazenda</label>
+            <label>🚜 Fazenda</label>
             <input type="text" id="fazenda" placeholder="Ex: Fazenda Boa Esperança">
         </div>
         <div class="input-group">
             <label>👨‍🌾 Proprietário</label>
-            <input type="text" id="proprietario" placeholder="Ex: Carlos Mendes">
+            <input type="text" id="proprietario" placeholder="Ex: João da Silva">
         </div>
         <div class="input-group">
             <label>📅 Data da Aplicação</label>
@@ -189,234 +73,372 @@
     </div>
 
     <div id="step2" class="step">
-        <h3>🌍 Passo 2: Local e Condições</h3>
+        <h3>🌍 Passo 2: Local e Cultura</h3>
         <div class="input-group">
             <label>📍 Estado (UF)</label>
-            <select id="estado" onchange="carregarMunicipios()">
-                <option value="">Carregando Estados...</option>
-            </select>
+            <select id="estado" onchange="carregarMunicipios()"><option value="">Carregando...</option></select>
         </div>
         <div class="input-group">
             <label>🏙️ Município</label>
-            <select id="municipio" disabled>
-                <option value="">Selecione o Estado primeiro</option>
+            <select id="municipio" disabled><option value="">Selecione o Estado primeiro</option></select>
+        </div>
+        <div class="input-group">
+            <label>🌾 Cultura Predominante (Maranhão)</label>
+            <select id="culturaSelect" onchange="checkOutroCultura()">
+                <option value="">Selecione a cultura/pastagem...</option>
+                <option value="Brachiaria brizantha (Marandu/Piatã/Xaraés)">Brachiaria brizantha (Marandu/Piatã)</option>
+                <option value="Panicum maximum (Mombaça/Zuri/Massai)">Panicum maximum (Mombaça/Zuri)</option>
+                <option value="Brachiaria ruziziensis">Brachiaria ruziziensis</option>
+                <option value="Brachiaria humidicola">Brachiaria humidicola</option>
+                <option value="Andropogon gayanus">Andropogon gayanus</option>
+                <option value="Cynodon spp. (Tifton/Cross)">Cynodon spp. (Tifton/Cross)</option>
+                <option value="Soja (Dessecação/Manejo pré-plantio)">Soja (Manejo pré-plantio)</option>
+                <option value="Milho (ILP - Integração Lavoura-Pecuária)">Milho (ILP)</option>
+                <option value="Eucalipto (ILPF - Sistema Silvipastoril)">Eucalipto (ILPF)</option>
+                <option value="Sorgo Forrageiro">Sorgo Forrageiro</option>
+                <option value="outro">Outro (Preencher manualmente)</option>
             </select>
         </div>
-        <div class="input-group">
-            <label>🌾 Cultura (Pastagem)</label>
-            <input type="text" id="cultura" placeholder="Ex: Brachiaria brizantha cv. Marandu">
-        </div>
-        <div class="input-group">
-            <label>☀️ Condições Edafoclimáticas</label>
-            <input type="text" id="clima" placeholder="Ex: Solo úmido, Temp: 28°C, Vento: 5 km/h">
+        <div class="input-group hidden" id="divOutroCultura">
+            <label>✍️ Especifique a Cultura:</label>
+            <input type="text" id="culturaOutro" placeholder="Ex: Capim-buffel">
         </div>
         <button class="btn" onclick="nextStep(2, 3)">Avançar ➡️</button>
         <button class="btn btn-secondary" onclick="nextStep(2, 1)">⬅️ Voltar</button>
     </div>
 
     <div id="step3" class="step">
-        <h3>🎯 Passo 3: Alvo Biológico</h3>
+        <h3>🌤️ Passo 3: Decisão de Voo (T25p)</h3>
+        <p style="font-size: 0.85em; color: #555;">Insira os dados climáticos atuais para obter os parâmetros de voo.</p>
         <div class="input-group">
-            <label>🌿 Selecione a Planta Daninha Principal</label>
-            <select id="daninhaSelect" onchange="checkOutro()">
-                <option value="">Selecione na lista...</option>
-                </select>
+            <label>🌡️ Temperatura (°C)</label>
+            <input type="number" id="temp" placeholder="Ex: 28" oninput="calcularVoo()">
         </div>
-        <div class="input-group hidden" id="divOutro">
-            <label>✍️ Preencha Manualmente (Daninha, Herbicida, Dose, Volume)</label>
-            <input type="text" id="daninhaOutro" placeholder="Ex: Capim-amargoso | Glifosato | 2L/ha | 15L calda">
+        <div class="input-group">
+            <label>💧 Umidade Relativa (%)</label>
+            <input type="number" id="umid" placeholder="Ex: 60" oninput="calcularVoo()">
         </div>
-        <button class="btn" onclick="gerarRelatorio()">Gerar Relatório Final 🚀</button>
+        <div class="input-group">
+            <label>💨 Velocidade do Vento (km/h)</label>
+            <input type="number" id="vento" placeholder="Ex: 8" oninput="calcularVoo()">
+        </div>
+        
+        <div id="flightPanel" class="flight-panel">
+            <div id="flightStatus" class="status-badge"></div>
+            <p id="flightMsg" style="font-size: 0.9em; margin-top: 5px;"></p>
+            <hr style="border-top: 1px solid #ddd;">
+            <p style="margin:5px 0; font-size: 0.9em;"><strong>Ajustes Agras T25p:</strong></p>
+            <ul style="margin: 0; padding-left: 20px; font-size: 0.9em;" id="flightParams">
+            </ul>
+        </div>
+
+        <button class="btn" onclick="validarPasso3()">Avançar ➡️</button>
         <button class="btn btn-secondary" onclick="nextStep(3, 2)">⬅️ Voltar</button>
     </div>
 
     <div id="step4" class="step">
-        <div id="relatorio-final">
-            <h2 style="text-align: center;">RELATÓRIO DE APLICAÇÃO AÉREA - DRONE AGRAS T25P</h2>
-            
-            <div class="bloco-relatorio">
-                <h3>📋 1. Identificação</h3>
-                <p><strong>Profissional/Piloto:</strong> <span id="r_piloto"></span></p>
-                <p><strong>Fazenda:</strong> <span id="r_fazenda"></span> | <strong>Proprietário:</strong> <span id="r_proprietario"></span></p>
-                <p><strong>Data:</strong> <span id="r_data"></span></p>
-                <p><strong>Localização:</strong> <span id="r_local"></span></p>
-            </div>
-
-            <div class="bloco-relatorio">
-                <h3>🌍 2. Área e Condições</h3>
-                <p><strong>Cultura/Pasto:</strong> <span id="r_cultura"></span></p>
-                <p><strong>Condições Climáticas/Solo:</strong> <span id="r_clima"></span></p>
-            </div>
-
-            <div class="bloco-relatorio bloco-destaque">
-                <h3>🎯 3. Prescrição de Controle e Setup do Drone</h3>
-                <p><strong>Alvo Biológico:</strong> <span id="r_alvo"></span></p>
-                <p><strong>Herbicida Recomendado:</strong> <span id="r_herbicida"></span></p>
-                <p><strong>Dosagem do Produto:</strong> <span id="r_dose"></span></p>
-                <p><strong>Volume de Calda (Drone):</strong> <span id="r_volume"></span></p>
-                <hr style="border-top: 1px dashed #27ae60;">
-                <p><strong>⚠️ Atenção Piloto:</strong> Ajustar bicos centrífugos para gotas médias/grossas (250-350 micras). Uso OBRIGATÓRIO de adjuvante/óleo mineral para evitar evaporação e deriva.</p>
-            </div>
-
-            <p class="footer-print no-print">*** Ctrl+P para imprimir ***</p>
+        <h3>🎯 Passo 4: Alvo Biológico</h3>
+        <div class="input-group">
+            <label>🌿 Selecione a Planta Daninha</label>
+            <select id="daninhaSelect" onchange="selecionarDaninha()">
+                <option value="">Selecione na lista (70 opções)...</option>
+            </select>
         </div>
         
-        <button class="btn no-print" onclick="enviarWhatsApp()">📲 Enviar via WhatsApp</button>
-        <button class="btn btn-secondary no-print" onclick="window.print()">🖨️ Imprimir PDF</button>
-        <button class="btn btn-secondary no-print" style="background: #e74c3c;" onclick="location.reload()">🔄 Novo Setup</button>
+        <div id="imgContainer" class="img-container">
+            <img id="weedImg" src="" alt="Foto da Planta">
+            <div class="img-caption" id="weedCaption">Imagem obtida via repositório público (Wikipedia)</div>
+        </div>
+
+        <div class="input-group hidden" id="divOutroDaninha" style="margin-top: 15px;">
+            <label>✍️ Preencha Manualmente (Daninha | Herbicida | Dose | Vol.):</label>
+            <input type="text" id="daninhaOutro" placeholder="Ex: Capim-amargoso | Glifosato | 2L/ha | 15L">
+        </div>
+
+        <button class="btn" onclick="gerarRelatorio()">Gerar Relatório Final 🚀</button>
+        <button class="btn btn-secondary" onclick="nextStep(4, 3)">⬅️ Voltar</button>
     </div>
 
+    <div id="step5" class="step">
+        <div class="no-print" style="text-align: center; margin-bottom: 20px;">
+            <h3>✅ Relatório Gerado com Sucesso!</h3>
+            <p style="font-size: 0.9em; color: #555;">Revise os dados antes de exportar.</p>
+        </div>
+
+        <div id="relatorio-final">
+            <h2 style="text-align: center; border-bottom: 2px solid #27ae60; padding-bottom: 10px;">RELATÓRIO DE APLICAÇÃO AÉREA - DRONE AGRAS T25P</h2>
+            
+            <div class="bloco">
+                <h3>📋 1. Identificação</h3>
+                <p><strong>Profissional Responsável:</strong> <span id="r_prof"></span></p>
+                <p><strong>Fazenda:</strong> <span id="r_faz"></span> | <strong>Proprietário:</strong> <span id="r_prop"></span></p>
+                <p><strong>Data:</strong> <span id="r_data"></span></p>
+            </div>
+
+            <div class="bloco">
+                <h3>🌍 2. Área e Condições Operacionais</h3>
+                <p><strong>Localidade:</strong> <span id="r_local"></span></p>
+                <p><strong>Cultura/Pastagem:</strong> <span id="r_cult"></span></p>
+                <p><strong>Clima Atual:</strong> <span id="r_clima"></span></p>
+                <p><strong>Decisão Operacional:</strong> <span id="r_decisao"></span></p>
+                <p><strong>Parâmetros de Voo (T25p):</strong> <span id="r_params"></span></p>
+            </div>
+
+            <div class="bloco" style="background-color: #e8f5e9; border-color: #27ae60;">
+                <h3>🎯 3. Prescrição Fitossanitária</h3>
+                <p><strong>Alvo Biológico:</strong> <span id="r_alvo"></span></p>
+                <p><strong>Herbicida Recomendado:</strong> <span id="r_herb"></span></p>
+                <p><strong>Modo de Ação:</strong> <span id="r_acao"></span></p>
+                <p><strong>Sintoma Esperado:</strong> <span id="r_sint"></span></p>
+                <p><strong>Efeito Residual:</strong> <span id="r_resid"></span></p>
+                <p><strong>Dosagem do Produto:</strong> <strong><span id="r_dose"></span></strong></p>
+                <p><strong>Volume de Calda (Drone):</strong> <strong><span id="r_vol"></span></strong></p>
+                <hr style="border-top: 1px dashed #27ae60; margin: 15px 0;">
+                <p style="font-size: 11pt;"><em>⚠️ Atenção: Configurar bicos centrífugos para gotas médias a grossas (250-350 micras). Uso OBRIGATÓRIO de adjuvante compatível na calda.</em></p>
+            </div>
+            <p class="footer-print">Documento gerado eletronicamente via AgroDrone Target - Válido como registro de Setup de Voo.</p>
+        </div>
+        
+        <button class="btn no-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+        <button class="btn btn-secondary no-print" onclick="location.reload()">🔄 Iniciar Novo Cadastro</button>
+    </div>
 </div>
 
 <script>
-    // --- BANCO DE DADOS DAS DANINHAS (Amostra representando a estrutura) ---
-    // Você pode adicionar as 70 copiando e colando os blocos {} e alterando os dados.
-    const bancoDaninhas = [
-        { id: "1", nome: "Guanxuma (Sida rhombifolia)", herbicida: "Tordon (2,4-D + Picloram)", dose: "4,0 a 5,0 L/ha", volume: "15 a 20 L/ha" },
-        { id: "2", nome: "Malva-branca (Sida cordifolia)", herbicida: "Tordon (2,4-D + Picloram)", dose: "4,0 a 5,0 L/ha", volume: "15 a 20 L/ha" },
-        { id: "3", nome: "Assa-peixe (Vernonia polyanthes)", herbicida: "Trueno (Aminopiralide + Fluroxipir)", dose: "2,0 a 3,0 L/ha", volume: "20 a 25 L/ha" },
-        { id: "4", nome: "Amendoim-bravo (Euphorbia heterophylla)", herbicida: "Aminol (2,4-D)", dose: "1,5 a 2,5 L/ha", volume: "15 L/ha" },
-        { id: "5", nome: "Dormideira (Mimosa pudica)", herbicida: "Tordon (2,4-D + Picloram)", dose: "3,0 a 4,0 L/ha", volume: "15 a 20 L/ha" },
-        { id: "68", nome: "Fumo-bravo (Solanum mauritianum)", herbicida: "Grazon (Aminopiralide + Triclopir)", dose: "2,5 a 3,5 L/ha", volume: "25 a 30 L/ha" },
-        { id: "69", nome: "Gema-de-ovo (Ludwigia octovalvis)", herbicida: "DMA 806 (2,4-D)", dose: "1,5 a 2,0 L/ha", volume: "15 a 20 L/ha" },
-        { id: "70", nome: "Aguapé (Eichhornia crassipes)", herbicida: "DMA 806 (2,4-D)", dose: "2,0 a 3,0 L/ha", volume: "20 a 25 L/ha" },
-        { id: "outro", nome: "Outro (Preencher Manualmente)...", herbicida: "", dose: "", volume: "" }
+    // --- 1. BANCO DE DADOS COMPLETO (70 DANINHAS) ---
+    const bdDaninhas = [
+        { id: 1, n: "Guanxuma", c: "Sida rhombifolia", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Epinastia e murcha", r: "Longo (6-12 meses)", d: "4,0 a 5,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 2, n: "Malva-branca", c: "Sida cordifolia", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Epinastia foliar e morte", r: "Longo (6-12 meses)", d: "4,0 a 5,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 3, n: "Assa-peixe", c: "Vernonia polyanthes", h: "Trueno (Aminopiralide + Fluroxipir)", a: "Sistêmico", s: "Necrose foliar", r: "Muito longo (12-24 meses)", d: "2,0 a 3,0 L/ha", v: "20 a 25 L/ha" },
+        { id: 4, n: "Amendoim-bravo", c: "Euphorbia heterophylla", h: "Aminol (2,4-D)", a: "Sistêmico", s: "Epinastia e perda de turgor", r: "Muito curto (7-30 dias)", d: "1,5 a 2,5 L/ha", v: "15 L/ha" },
+        { id: 5, n: "Dormideira", c: "Mimosa pudica", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Desfolha", r: "Longo (6-12 meses)", d: "3,0 a 4,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 6, n: "Malícia", c: "Mimosa invisa", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Epinastia severa", r: "Longo (6-12 meses)", d: "3,0 a 4,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 7, n: "Leiteiro", c: "Euphorbia heterophylla", h: "DMA 806 (2,4-D)", a: "Sistêmico", s: "Retorcimento e exsudação", r: "Muito curto", d: "1,5 a 2,5 L/ha", v: "15 L/ha" },
+        { id: 8, n: "Arranha-gato (Jovem)", c: "Acacia plumosa", h: "Padron / Dominum", a: "Sistêmico", s: "Seca dos ponteiros", r: "Curto (30-60 dias)", d: "2,0 a 3,0 L/ha", v: "25 a 30 L/ha" },
+        { id: 9, n: "Mata-pasto", c: "Senna obtusifolia", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Rachadura no caule", r: "Longo (6-12 meses)", d: "3,0 a 4,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 10, n: "Fedegoso", c: "Senna occidentalis", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Epinastia e seca", r: "Longo (6-12 meses)", d: "3,0 a 4,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 11, n: "Vassourinha-de-botão", c: "Spermacoce verticillata", h: "Ally + DMA", a: "Sistêmico", s: "Paralisação de crescimento", r: "Médio (30-60 dias)", d: "10g + 1,5 L/ha", v: "15-20 L/ha + Óleo" },
+        { id: 12, n: "Jurubeba (Jovem)", c: "Solanum paniculatum", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Murcha e retorcimento", r: "Longo (6-12 meses)", d: "4,0 a 6,0 L/ha", v: "25 a 30 L/ha" },
+        { id: 13, n: "Joá-bravo", c: "Solanum viarum", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Engrossamento do caule", r: "Longo (6-12 meses)", d: "4,0 a 5,0 L/ha", v: "20 a 25 L/ha" },
+        { id: 14, n: "Pinhão-manso (Rebrota)", c: "Jatropha curcas", h: "Trueno (Aminopiralide+Fluroxipir)", a: "Sistêmico", s: "Enrolamento, seca do lenho", r: "Muito longo", d: "2,0 a 3,0 L/ha", v: "20 a 25 L/ha" },
+        { id: 15, n: "Bucha", c: "Luffa operculata", h: "Aminol (2,4-D)", a: "Sistêmico", s: "Secamento de gavinhas", r: "Muito curto", d: "1,5 a 2,5 L/ha", v: "15 a 20 L/ha" },
+        { id: 16, n: "Ciganinha", c: "Memora peregrina", h: "Dominum", a: "Sistêmico", s: "Murcha foliar imediata", r: "Muito longo", d: "2,0 a 2,5 L/ha", v: "20 L/ha" },
+        { id: 17, n: "Espinho-de-vassoura", c: "Sida spinosa", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Epinastia e seca", r: "Longo (6-12 meses)", d: "3,5 a 4,5 L/ha", v: "15 a 20 L/ha" },
+        { id: 18, n: "Carrapicho-de-carneiro", c: "Acanthospermum hispidum", h: "DMA 806 (2,4-D)", a: "Sistêmico", s: "Clorose e seca", r: "Muito curto", d: "1,0 a 1,5 L/ha", v: "15 L/ha" },
+        { id: 19, n: "Carrapicho-beiço-de-boi", c: "Desmodium adscendens", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Epinastia em ramos rasteiros", r: "Longo", d: "3,0 a 4,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 20, n: "Carrapicho-de-agulha", c: "Bidens pilosa", h: "U46 BR (2,4-D)", a: "Sistêmico", s: "Retorcimento rápido", r: "Muito curto", d: "1,0 a 1,5 L/ha", v: "15 L/ha" },
+        { id: 21, n: "Erva-de-santa-maria", c: "Dysphania ambrosioides", h: "Aminol (2,4-D)", a: "Sistêmico", s: "Engrossamento dos nós", r: "Muito curto", d: "1,5 a 2,0 L/ha", v: "15 L/ha" },
+        { id: 22, n: "Cordão-de-frade", c: "Leonotis nepetifolia", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Clorose e morte do caule", r: "Longo", d: "3,0 a 4,0 L/ha", v: "20 L/ha" },
+        { id: 23, n: "Poaia-branca", c: "Richardia brasiliensis", h: "Ally (Metsulfurom)", a: "Sistêmico", s: "Paralisação e necrose", r: "Médio", d: "5 a 8 g/ha", v: "15 L/ha + Adjuvante" },
+        { id: 24, n: "Maria-mole", c: "Senecio brasiliensis", h: "Tordon (2,4-D + Picloram)", a: "Sistêmico", s: "Epinastia agressiva", r: "Longo", d: "4,0 a 5,0 L/ha", v: "20 L/ha" },
+        { id: 25, n: "Picão-preto", c: "Bidens subalternans", h: "DMA 806 (2,4-D)", a: "Sistêmico", s: "Murcha severa", r: "Muito curto", d: "1,0 a 1,5 L/ha", v: "15 L/ha" },
+        { id: 26, n: "Falso-alecrim", c: "Baccharis dracunculifolia", h: "Trueno", a: "Sistêmico", s: "Seca dos ramos", r: "Muito longo", d: "2,5 a 3,0 L/ha", v: "25 a 30 L/ha" },
+        { id: 27, n: "Samambaia", c: "Pteridium aquilinum", h: "Ally (Metsulfurom)", a: "Sistêmico", s: "Clorose nas frondes", r: "Médio", d: "10 a 15 g/ha", v: "20 L/ha + Óleo Mineral" },
+        { id: 28, n: "Sazzu", c: "Cissus sicyoides", h: "Tordon", a: "Sistêmico", s: "Retorcimento lianas", r: "Longo", d: "4,0 a 5,0 L/ha", v: "20 a 25 L/ha" },
+        { id: 29, n: "Angiquinho", c: "Desmanthus virgatus", h: "Jaguar", a: "Sistêmico", s: "Desfolha", r: "Muito longo", d: "2,0 a 3,0 L/ha", v: "20 L/ha" },
+        { id: 30, n: "Unha-de-gato (Rebrota)", c: "Acacia bonariensis", h: "Padron", a: "Sistêmico", s: "Seca de ponteiros", r: "Curto", d: "2,5 a 3,5 L/ha", v: "25 a 30 L/ha" },
+        { id: 31, n: "Serralha", c: "Sonchus oleraceus", h: "Aminol (2,4-D)", a: "Sistêmico", s: "Retorcimento e murcha", r: "Muito curto", d: "1,0 a 1,5 L/ha", v: "15 L/ha" },
+        { id: 32, n: "Tanchagem", c: "Plantago major", h: "U46 BR (2,4-D)", a: "Sistêmico", s: "Secamento rasteiro", r: "Muito curto", d: "1,5 a 2,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 33, n: "Losna-branca", c: "Artemisia verlotiorum", h: "Tordon", a: "Sistêmico", s: "Epinastia total", r: "Longo", d: "3,0 a 4,0 L/ha", v: "20 L/ha" },
+        { id: 34, n: "Mentrasto", c: "Ageratum conyzoides", h: "DMA 806", a: "Sistêmico", s: "Amarelecimento", r: "Muito curto", d: "1,0 a 1,5 L/ha", v: "15 L/ha" },
+        { id: 35, n: "Erva-de-touro", c: "Tridax procumbens", h: "Tordon", a: "Sistêmico", s: "Retorcimento da haste", r: "Longo", d: "3,0 a 4,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 36, n: "Apaga-fogo", c: "Alternanthera tenella", h: "Tordon", a: "Sistêmico", s: "Epinastia rasteira", r: "Longo", d: "3,0 a 4,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 37, n: "Amora-preta", c: "Rubus urticifolius", h: "Trueno", a: "Sistêmico", s: "Clorose e necrose", r: "Muito longo", d: "2,5 a 3,0 L/ha", v: "25 a 30 L/ha" },
+        { id: 38, n: "Velame", c: "Croton heliotropiifolius", h: "Tordon", a: "Sistêmico", s: "Desfolha e seca", r: "Longo", d: "4,0 a 5,0 L/ha", v: "20 a 25 L/ha" },
+        { id: 39, n: "Marmeleiro", c: "Croton sonderianus", h: "Dominum", a: "Sistêmico", s: "Seca ramos", r: "Muito longo", d: "2,0 a 2,5 L/ha", v: "20 a 25 L/ha" },
+        { id: 40, n: "Pimenta-de-macaco", c: "Piper aduncum", h: "Tordon", a: "Sistêmico", s: "Queda foliar", r: "Longo", d: "4,0 a 6,0 L/ha", v: "25 L/ha" },
+        { id: 41, n: "Chá-de-pedra", c: "Stachytarpheta cayennensis", h: "Jaguar", a: "Sistêmico", s: "Aborto floral", r: "Muito longo", d: "2,0 a 3,0 L/ha", v: "20 L/ha" },
+        { id: 42, n: "Gervão-azul", c: "Stachytarpheta jamaicensis", h: "Tordon", a: "Sistêmico", s: "Retorcimento", r: "Longo", d: "3,0 a 4,0 L/ha", v: "20 L/ha" },
+        { id: 43, n: "Cordas-de-viola", c: "Ipomoea purpurea", h: "Aminol", a: "Sistêmico", s: "Enrolamento agudo", r: "Muito curto", d: "1,5 a 2,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 44, n: "Jitirana", c: "Ipomoea cairica", h: "DMA 806", a: "Sistêmico", s: "Morte das lianas", r: "Muito curto", d: "1,5 a 2,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 45, n: "Merremia", c: "Merremia aegyptia", h: "U46 BR", a: "Sistêmico", s: "Desfolha", r: "Muito curto", d: "1,5 a 2,0 L/ha", v: "15 L/ha" },
+        { id: 46, n: "Feijão-de-rola", c: "Macroptilium lathyroides", h: "Tordon", a: "Sistêmico", s: "Engrossamento caulinar", r: "Longo", d: "3,0 a 4,0 L/ha", v: "20 L/ha" },
+        { id: 47, n: "Centrosema", c: "Centrosema pubescens", h: "Tordon", a: "Sistêmico", s: "Morte radicular", r: "Longo", d: "3,0 a 4,0 L/ha", v: "20 L/ha" },
+        { id: 48, n: "Calopogônio", c: "Calopogonium mucunoides", h: "Tordon", a: "Sistêmico", s: "Epinastia foliar", r: "Longo", d: "3,0 a 4,0 L/ha", v: "20 L/ha" },
+        { id: 49, n: "Melão-de-são-caetano", c: "Momordica charantia", h: "Aminol", a: "Sistêmico", s: "Seca das gavinhas", r: "Muito curto", d: "1,5 a 2,0 L/ha", v: "15 L/ha" },
+        { id: 50, n: "Tiririca", c: "Cyperus rotundus", h: "Ally (Metsulfurom)", a: "Sistêmico", s: "Bulbos escurecem", r: "Médio", d: "5 a 10 g/ha", v: "15 a 20 L/ha + Óleo" },
+        { id: 51, n: "Junquinho", c: "Cyperus esculentus", h: "Zartan", a: "Sistêmico", s: "Murcha geral", r: "Médio", d: "5 a 10 g/ha", v: "15 a 20 L/ha + Óleo" },
+        { id: 52, n: "Vassourinha-doce", c: "Scoparia dulcis", h: "Ally", a: "Sistêmico", s: "Amarelecimento apical", r: "Médio", d: "8 a 12 g/ha", v: "15 L/ha + Óleo" },
+        { id: 53, n: "Quebra-pedra", c: "Phyllanthus niruri", h: "Aminol", a: "Sistêmico", s: "Folhas caem", r: "Muito curto", d: "1,0 a 1,5 L/ha", v: "15 L/ha" },
+        { id: 54, n: "Bredo/Caruru", c: "Amaranthus spinosus", h: "DMA 806", a: "Sistêmico", s: "Espessamento do caule", r: "Muito curto", d: "1,0 a 1,5 L/ha", v: "15 a 20 L/ha" },
+        { id: 55, n: "Caruru-de-espinho", c: "Amaranthus viridis", h: "Aminol", a: "Sistêmico", s: "Retorcimento completo", r: "Muito curto", d: "1,0 a 1,5 L/ha", v: "15 a 20 L/ha" },
+        { id: 56, n: "Pé-de-pinto", c: "Boerhavia diffusa", h: "Jaguar", a: "Sistêmico", s: "Epinastia de ramos", r: "Muito longo", d: "2,0 a 2,5 L/ha", v: "15 a 20 L/ha" },
+        { id: 57, n: "Erva-quente", c: "Spermacoce alata", h: "Ally", a: "Sistêmico", s: "Clorose apical", r: "Médio", d: "5 a 10 g/ha", v: "15 L/ha" },
+        { id: 58, n: "Falsa-serralha", c: "Emilia sonchifolia", h: "Aminol", a: "Sistêmico", s: "Perda de turgescência", r: "Muito curto", d: "1,0 a 1,5 L/ha", v: "15 L/ha" },
+        { id: 59, n: "Picão-branco", c: "Galinsoga parviflora", h: "DMA 806", a: "Sistêmico", s: "Ressecamento", r: "Muito curto", d: "1,0 a 1,5 L/ha", v: "15 L/ha" },
+        { id: 60, n: "Botão-de-ouro", c: "Spilanthes oleracea", h: "Jaguar", a: "Sistêmico", s: "Enrolamento", r: "Muito longo", d: "2,0 a 2,5 L/ha", v: "15 a 20 L/ha" },
+        { id: 61, n: "Mastruz", c: "Chenopodium ambrosioides", h: "U46 BR", a: "Sistêmico", s: "Necrose foliar", r: "Muito curto", d: "1,5 L/ha", v: "15 L/ha" },
+        { id: 62, n: "Trapoeraba", c: "Commelina benghalensis", h: "Starane (Fluroxipir)", a: "Sistêmico", s: "Caule aquoso apodrecido", r: "Curto", d: "0,5 a 1,0 L/ha", v: "20 L/ha" },
+        { id: 63, n: "Margaridinha", c: "Chrysanthemum leucanthemum", h: "Tordon", a: "Sistêmico", s: "Desidratação rápida", r: "Longo", d: "3,5 a 4,5 L/ha", v: "20 L/ha" },
+        { id: 64, n: "Língua-de-vaca", c: "Chaptalia nutans", h: "Aminol", a: "Sistêmico", s: "Roseta murcha", r: "Muito curto", d: "1,5 a 2,0 L/ha", v: "15 L/ha" },
+        { id: 65, n: "Orelha-de-urso", c: "Elephantopus mollis", h: "Tordon", a: "Sistêmico", s: "Murcha basais", r: "Longo", d: "4,0 a 5,0 L/ha", v: "20 L/ha" },
+        { id: 66, n: "Erva-de-são-joão", c: "Hypericum perforatum", h: "Trueno", a: "Sistêmico", s: "Ramos ressecados", r: "Muito longo", d: "2,0 a 3,0 L/ha", v: "25 L/ha" },
+        { id: 67, n: "Salgadeira", c: "Pothomorphe umbellata", h: "Tordon", a: "Sistêmico", s: "Morte foliar", r: "Longo", d: "4,0 a 5,0 L/ha", v: "20 L/ha" },
+        { id: 68, n: "Fumo-bravo", c: "Solanum mauritianum", h: "Grazon", a: "Sistêmico", s: "Queda de folhas", r: "Muito longo", d: "2,5 a 3,5 L/ha", v: "25 a 30 L/ha" },
+        { id: 69, n: "Gema-de-ovo", c: "Ludwigia octovalvis", h: "DMA 806", a: "Sistêmico", s: "Retorcimento severo", r: "Muito curto", d: "1,5 a 2,0 L/ha", v: "15 a 20 L/ha" },
+        { id: 70, n: "Aguapé", c: "Eichhornia crassipes", h: "DMA 806", a: "Sistêmico", s: "Planta afunda", r: "Muito curto", d: "2,0 a 3,0 L/ha", v: "20 a 25 L/ha" }
     ];
 
-    // --- INICIALIZAÇÃO ---
+    // --- 2. INICIALIZAÇÃO ---
     window.onload = () => {
         carregarEstados();
-        popularSelectDaninhas();
+        popularDaninhas();
         document.getElementById('dataApp').valueAsDate = new Date();
     };
 
-    // --- NAVEGAÇÃO GAMIFICADA ---
     function nextStep(atual, proximo) {
         document.getElementById(`step${atual}`).classList.remove('active');
         document.getElementById(`step${proximo}`).classList.add('active');
     }
 
-    // --- API IBGE (ESTADOS E MUNICÍPIOS) ---
+    // --- 3. API IBGE ---
     async function carregarEstados() {
         try {
             const res = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
             const estados = await res.json();
             const select = document.getElementById('estado');
-            select.innerHTML = '<option value="">Selecione o Estado (UF)...</option>';
-            estados.forEach(uf => {
-                select.innerHTML += `<option value="${uf.sigla}">${uf.nome} (${uf.sigla})</option>`;
-            });
-        } catch (e) {
-            console.error("Erro ao carregar IBGE:", e);
-        }
+            estados.forEach(uf => select.innerHTML += `<option value="${uf.sigla}">${uf.nome}</option>`);
+        } catch (e) {}
     }
-
     async function carregarMunicipios() {
         const uf = document.getElementById('estado').value;
         const select = document.getElementById('municipio');
-        if (!uf) {
-            select.innerHTML = '<option value="">Selecione o Estado primeiro</option>';
-            select.disabled = true;
-            return;
-        }
-        select.disabled = false;
-        select.innerHTML = '<option value="">Carregando...</option>';
+        if (!uf) return select.disabled = true;
+        select.disabled = false; select.innerHTML = '<option value="">Carregando...</option>';
         try {
             const res = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`);
-            const municipios = await res.json();
-            select.innerHTML = '<option value="">Selecione o Município...</option>';
-            municipios.forEach(m => {
-                select.innerHTML += `<option value="${m.nome}">${m.nome}</option>`;
-            });
-        } catch (e) {
-            console.error("Erro IBGE Municipios:", e);
-        }
+            const mun = await res.json();
+            select.innerHTML = '<option value="">Selecione...</option>';
+            mun.forEach(m => select.innerHTML += `<option value="${m.nome}">${m.nome}</option>`);
+        } catch (e) {}
     }
 
-    // --- POPULAR DADOS DANINHAS ---
-    function popularSelectDaninhas() {
-        const select = document.getElementById('daninhaSelect');
-        bancoDaninhas.forEach(item => {
-            select.innerHTML += `<option value="${item.id}">${item.nome}</option>`;
-        });
+    function checkOutroCultura() {
+        const val = document.getElementById('culturaSelect').value;
+        document.getElementById('divOutroCultura').classList.toggle('hidden', val !== 'outro');
     }
 
-    function checkOutro() {
-        const val = document.getElementById('daninhaSelect').value;
-        if (val === 'outro') {
-            document.getElementById('divOutro').classList.remove('hidden');
+    // --- 4. INTELIGÊNCIA DE VOO (T25p) ---
+    let statusVooGlobal = "";
+    let paramsVooGlobal = "";
+
+    function calcularVoo() {
+        const t = parseFloat(document.getElementById('temp').value);
+        const u = parseFloat(document.getElementById('umid').value);
+        const v = parseFloat(document.getElementById('vento').value);
+        const panel = document.getElementById('flightPanel');
+        const badge = document.getElementById('flightStatus');
+        const msg = document.getElementById('flightMsg');
+        const param = document.getElementById('flightParams');
+
+        if (isNaN(t) || isNaN(u) || isNaN(v)) { panel.style.display = 'none'; return; }
+        panel.style.display = 'block';
+
+        let status, cor, texto;
+        // Lógica de restrição para herbicidas hormonais (deriva/evaporação)
+        if (t > 32 || u < 50 || v > 12 || v < 2) {
+            status = "🛑 NÃO VOAR"; cor = "var(--danger)";
+            texto = v < 2 ? "Risco de inversão térmica (gotas ficam suspensas)." : "Risco extremo de deriva e rápida evaporação da calda.";
+            paramsVooGlobal = "N/A - Voo abortado.";
+        } else if (t >= 30 || u <= 55 || v >= 10 || v <= 3) {
+            status = "⚠️ ESPERAR MELHORAR"; cor = "var(--warning)";
+            texto = "Condições marginais. Aumente o tamanho da gota (350µm) e baixe a altura de voo.";
+            paramsVooGlobal = "Altura: 2.0m a 2.5m | Velocidade: 18 a 20 km/h | Faixa: 6.0m";
         } else {
-            document.getElementById('divOutro').classList.add('hidden');
+            status = "✅ VOAR"; cor = "var(--primary)";
+            texto = "Condições edafoclimáticas ideais para aplicação segura.";
+            paramsVooGlobal = "Altura: 2.8m a 3.0m | Velocidade: 22 a 25 km/h | Faixa: 6.5 a 7.0m";
         }
+
+        badge.style.backgroundColor = cor;
+        badge.innerText = status;
+        msg.innerText = texto;
+        param.innerHTML = `<li>${paramsVooGlobal}</li>`;
+        
+        statusVooGlobal = `${status} - ${texto}`;
     }
 
-    // --- GERAR RELATÓRIO FINAL ---
-    let txtWhatsapp = "";
-
-    function gerarRelatorio() {
-        // Coletar Dados
-        const piloto = document.getElementById('piloto').value || "Não informado";
-        const fazenda = document.getElementById('fazenda').value || "Não informado";
-        const proprietario = document.getElementById('proprietario').value || "Não informado";
-        const data = document.getElementById('dataApp').value.split('-').reverse().join('/') || "Não informado";
-        const estado = document.getElementById('estado').value || "";
-        const municipio = document.getElementById('municipio').value || "";
-        const cultura = document.getElementById('cultura').value || "Não informado";
-        const clima = document.getElementById('clima').value || "Não informado";
-        
-        let alvo = "", herbicida = "", dose = "", volume = "";
-        
-        const daninhaId = document.getElementById('daninhaSelect').value;
-        if (daninhaId === 'outro') {
-            alvo = document.getElementById('daninhaOutro').value || "Não informado";
-            herbicida = "Conforme prescrição manual";
-            dose = "-";
-            volume = "Ajustar conforme manual Agras T25p";
-        } else {
-            const selecionada = bancoDaninhas.find(d => d.id === daninhaId);
-            if(selecionada){
-                alvo = selecionada.nome;
-                herbicida = selecionada.herbicida;
-                dose = selecionada.dose;
-                volume = selecionada.volume;
-            } else {
-                alvo = "Nenhum selecionado";
-            }
-        }
-
-        // Preencher DOM (Tela/Impressão)
-        document.getElementById('r_piloto').innerText = piloto;
-        document.getElementById('r_fazenda').innerText = fazenda;
-        document.getElementById('r_proprietario').innerText = proprietario;
-        document.getElementById('r_data').innerText = data;
-        document.getElementById('r_local').innerText = `${municipio} - ${estado}`;
-        document.getElementById('r_cultura').innerText = cultura;
-        document.getElementById('r_clima').innerText = clima;
-        document.getElementById('r_alvo').innerText = alvo;
-        document.getElementById('r_herbicida').innerText = herbicida;
-        document.getElementById('r_dose').innerText = dose;
-        document.getElementById('r_volume').innerText = volume;
-
-        // Montar string para o WhatsApp
-        txtWhatsapp = `*RELATÓRIO DE VOO - AGRAS T25P* 🚁\n\n` +
-                      `👨‍✈️ Piloto: ${piloto}\n` +
-                      `🚜 Fazenda: ${fazenda} | Prop: ${proprietario}\n` +
-                      `📍 Local: ${municipio}-${estado} | 📅 Data: ${data}\n` +
-                      `🌾 Pasto: ${cultura}\n` +
-                      `☀️ Clima: ${clima}\n\n` +
-                      `🎯 *ALVO*: ${alvo}\n` +
-                      `🧪 *PRODUTO*: ${herbicida}\n` +
-                      `💧 *DOSE*: ${dose}\n` +
-                      `🚿 *CALDA (Drone)*: ${volume}\n\n` +
-                      `⚠️ Ajustar bicos para gotas médias/grossas e usar adjuvante.`;
-
+    function validarPasso3() {
+        if (!statusVooGlobal) return alert("Preencha as condições climáticas para continuar.");
         nextStep(3, 4);
     }
 
-    // --- ENVIAR WHATSAPP ---
-    function enviarWhatsApp() {
-        const msgCodificada = encodeURIComponent(txtWhatsapp);
-        window.open(`https://wa.me/?text=${msgCodificada}`, '_blank');
+    // --- 5. DANINHAS E IMAGENS DA WIKIPEDIA ---
+    function popularDaninhas() {
+        const select = document.getElementById('daninhaSelect');
+        bdDaninhas.forEach(d => select.innerHTML += `<option value="${d.id}">${d.n} (${d.c})</option>`);
+        select.innerHTML += `<option value="outro">Outro (Preencher Manualmente)</option>`;
+    }
+
+    async function selecionarDaninha() {
+        const id = document.getElementById('daninhaSelect').value;
+        const imgCont = document.getElementById('imgContainer');
+        const img = document.getElementById('weedImg');
+        const cap = document.getElementById('weedCaption');
+        
+        document.getElementById('divOutroDaninha').classList.toggle('hidden', id !== 'outro');
+        
+        if (!id || id === 'outro') { imgCont.style.display = 'none'; return; }
+
+        const planta = bdDaninhas.find(d => d.id == id);
+        imgCont.style.display = 'block';
+        img.src = ""; cap.innerText = "Buscando imagem no repositório livre...";
+
+        // API Wikipedia
+        try {
+            const query = planta.c.replace(' ', '_');
+            const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${query}`);
+            const data = await res.json();
+            if (data.thumbnail && data.thumbnail.source) {
+                img.src = data.thumbnail.source;
+                cap.innerText = `Imagem ilustrativa via Wikimedia: ${planta.c}`;
+            } else {
+                imgCont.style.display = 'none';
+            }
+        } catch (e) { imgCont.style.display = 'none'; }
+    }
+
+    // --- 6. GERAR RELATÓRIO FINAL ---
+    function gerarRelatorio() {
+        // Coleta (1 e 2)
+        document.getElementById('r_prof').innerText = document.getElementById('profissional').value || "Não informado";
+        document.getElementById('r_faz').innerText = document.getElementById('fazenda').value || "Não informado";
+        document.getElementById('r_prop').innerText = document.getElementById('proprietario').value || "Não informado";
+        document.getElementById('r_data').innerText = document.getElementById('dataApp').value.split('-').reverse().join('/') || "Não informado";
+        document.getElementById('r_local').innerText = `${document.getElementById('municipio').value || '-'} / ${document.getElementById('estado').value || '-'}`;
+        
+        const cultSel = document.getElementById('culturaSelect').value;
+        document.getElementById('r_cult').innerText = cultSel === 'outro' ? document.getElementById('culturaOutro').value : cultSel;
+
+        // Coleta (3 - Clima)
+        document.getElementById('r_clima').innerText = `Temp: ${document.getElementById('temp').value}°C | Umid: ${document.getElementById('umid').value}% | Vento: ${document.getElementById('vento').value} km/h`;
+        document.getElementById('r_decisao').innerText = statusVooGlobal;
+        document.getElementById('r_params').innerText = paramsVooGlobal;
+
+        // Coleta (4 - Alvo)
+        const dId = document.getElementById('daninhaSelect').value;
+        if (dId === 'outro') {
+            document.getElementById('r_alvo').innerText = document.getElementById('daninhaOutro').value || "Manual";
+            document.getElementById('r_herb').innerText = "-";
+            document.getElementById('r_acao').innerText = "-";
+            document.getElementById('r_sint').innerText = "-";
+            document.getElementById('r_resid').innerText = "-";
+            document.getElementById('r_dose').innerText = "Conforme prescrição";
+            document.getElementById('r_vol').innerText = "Conforme T25p";
+        } else {
+            const planta = bdDaninhas.find(d => d.id == dId);
+            document.getElementById('r_alvo').innerText = `${planta.n} (${planta.c})`;
+            document.getElementById('r_herb').innerText = planta.h;
+            document.getElementById('r_acao').innerText = planta.a;
+            document.getElementById('r_sint').innerText = planta.s;
+            document.getElementById('r_resid').innerText = planta.r;
+            document.getElementById('r_dose').innerText = planta.d;
+            document.getElementById('r_vol').innerText = planta.v;
+        }
+
+        // Mostra o passo 5
+        document.getElementById('relatorio-final').style.display = 'block';
+        nextStep(4, 5);
     }
 </script>
 
