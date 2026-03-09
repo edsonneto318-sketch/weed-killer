@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroDrone Target - Manejo Inteligente 🚁🌱</title>
+    <style>
+        /* Estilos Globais UI */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        
+        :root {
+            --primary: #27ae60;
+            --secondary: #2ecc71;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #e8f5e9;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        .app-container {
+            background: #fff;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .step {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
+        }
+
+        /* Dica / Placeholder Transparente */
+        input::placeholder {
+            color: #bdc3c7;
+            opacity: 0.7;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover { background: #219653; }
+        .btn:active { transform: scale(0.98); }
+        .btn-secondary { background: #7f8c8d; margin-top: 10px; }
+
+        /* Estilos do Relatório Final (Print e Tela) */
+        #relatorio-final {
+            font-family: 'Times New Roman', Times, serif !important;
+            font-size: 12pt;
+            color: black;
+            padding: 20px;
+        }
+
+        .bloco-relatorio {
+            border: 1px solid #000;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+
+        .bloco-relatorio h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            font-size: 14pt;
+        }
+
+        .bloco-destaque {
+            background-color: #e8f5e9;
+            border-color: var(--primary);
+        }
+
+        .footer-print {
+            text-align: center;
+            font-size: 10pt;
+            color: #555;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        .hidden { display: none !important; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #step4, #step4 * { visibility: visible; }
+            #step4 { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none !important; }
+            .app-container { box-shadow: none; width: 100%; }
+            #relatorio-final { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">🚁 AgroDrone Target 🌱</div>
+
+    <div id="step1" class="step active">
+        <h3>📋 Passo 1: Identificação</h3>
+        <div class="input-group">
+            <label>👨‍✈️ Piloto / Profissional</label>
+            <input type="text" id="piloto" placeholder="Ex: João da Silva">
+        </div>
+        <div class="input-group">
+            <label>🚜 Nome da Fazenda</label>
+            <input type="text" id="fazenda" placeholder="Ex: Fazenda Boa Esperança">
+        </div>
+        <div class="input-group">
+            <label>👨‍🌾 Proprietário</label>
+            <input type="text" id="proprietario" placeholder="Ex: Carlos Mendes">
+        </div>
+        <div class="input-group">
+            <label>📅 Data da Aplicação</label>
+            <input type="date" id="dataApp">
+        </div>
+        <button class="btn" onclick="nextStep(1, 2)">Avançar ➡️</button>
+    </div>
+
+    <div id="step2" class="step">
+        <h3>🌍 Passo 2: Local e Condições</h3>
+        <div class="input-group">
+            <label>📍 Estado (UF)</label>
+            <select id="estado" onchange="carregarMunicipios()">
+                <option value="">Carregando Estados...</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>🏙️ Município</label>
+            <select id="municipio" disabled>
+                <option value="">Selecione o Estado primeiro</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>🌾 Cultura (Pastagem)</label>
+            <input type="text" id="cultura" placeholder="Ex: Brachiaria brizantha cv. Marandu">
+        </div>
+        <div class="input-group">
+            <label>☀️ Condições Edafoclimáticas</label>
+            <input type="text" id="clima" placeholder="Ex: Solo úmido, Temp: 28°C, Vento: 5 km/h">
+        </div>
+        <button class="btn" onclick="nextStep(2, 3)">Avançar ➡️</button>
+        <button class="btn btn-secondary" onclick="nextStep(2, 1)">⬅️ Voltar</button>
+    </div>
+
+    <div id="step3" class="step">
+        <h3>🎯 Passo 3: Alvo Biológico</h3>
+        <div class="input-group">
+            <label>🌿 Selecione a Planta Daninha Principal</label>
+            <select id="daninhaSelect" onchange="checkOutro()">
+                <option value="">Selecione na lista...</option>
+                </select>
+        </div>
+        <div class="input-group hidden" id="divOutro">
+            <label>✍️ Preencha Manualmente (Daninha, Herbicida, Dose, Volume)</label>
+            <input type="text" id="daninhaOutro" placeholder="Ex: Capim-amargoso | Glifosato | 2L/ha | 15L calda">
+        </div>
+        <button class="btn" onclick="gerarRelatorio()">Gerar Relatório Final 🚀</button>
+        <button class="btn btn-secondary" onclick="nextStep(3, 2)">⬅️ Voltar</button>
+    </div>
+
+    <div id="step4" class="step">
+        <div id="relatorio-final">
+            <h2 style="text-align: center;">RELATÓRIO DE APLICAÇÃO AÉREA - DRONE AGRAS T25P</h2>
+            
+            <div class="bloco-relatorio">
+                <h3>📋 1. Identificação</h3>
+                <p><strong>Profissional/Piloto:</strong> <span id="r_piloto"></span></p>
+                <p><strong>Fazenda:</strong> <span id="r_fazenda"></span> | <strong>Proprietário:</strong> <span id="r_proprietario"></span></p>
+                <p><strong>Data:</strong> <span id="r_data"></span></p>
+                <p><strong>Localização:</strong> <span id="r_local"></span></p>
+            </div>
+
+            <div class="bloco-relatorio">
+                <h3>🌍 2. Área e Condições</h3>
+                <p><strong>Cultura/Pasto:</strong> <span id="r_cultura"></span></p>
+                <p><strong>Condições Climáticas/Solo:</strong> <span id="r_clima"></span></p>
+            </div>
+
+            <div class="bloco-relatorio bloco-destaque">
+                <h3>🎯 3. Prescrição de Controle e Setup do Drone</h3>
+                <p><strong>Alvo Biológico:</strong> <span id="r_alvo"></span></p>
+                <p><strong>Herbicida Recomendado:</strong> <span id="r_herbicida"></span></p>
+                <p><strong>Dosagem do Produto:</strong> <span id="r_dose"></span></p>
+                <p><strong>Volume de Calda (Drone):</strong> <span id="r_volume"></span></p>
+                <hr style="border-top: 1px dashed #27ae60;">
+                <p><strong>⚠️ Atenção Piloto:</strong> Ajustar bicos centrífugos para gotas médias/grossas (250-350 micras). Uso OBRIGATÓRIO de adjuvante/óleo mineral para evitar evaporação e deriva.</p>
+            </div>
+
+            <p class="footer-print no-print">*** Ctrl+P para imprimir ***</p>
+        </div>
+        
+        <button class="btn no-print" onclick="enviarWhatsApp()">📲 Enviar via WhatsApp</button>
+        <button class="btn btn-secondary no-print" onclick="window.print()">🖨️ Imprimir PDF</button>
+        <button class="btn btn-secondary no-print" style="background: #e74c3c;" onclick="location.reload()">🔄 Novo Setup</button>
+    </div>
+
+</div>
+
+<script>
+    // --- BANCO DE DADOS DAS DANINHAS (Amostra representando a estrutura) ---
+    // Você pode adicionar as 70 copiando e colando os blocos {} e alterando os dados.
+    const bancoDaninhas = [
+        { id: "1", nome: "Guanxuma (Sida rhombifolia)", herbicida: "Tordon (2,4-D + Picloram)", dose: "4,0 a 5,0 L/ha", volume: "15 a 20 L/ha" },
+        { id: "2", nome: "Malva-branca (Sida cordifolia)", herbicida: "Tordon (2,4-D + Picloram)", dose: "4,0 a 5,0 L/ha", volume: "15 a 20 L/ha" },
+        { id: "3", nome: "Assa-peixe (Vernonia polyanthes)", herbicida: "Trueno (Aminopiralide + Fluroxipir)", dose: "2,0 a 3,0 L/ha", volume: "20 a 25 L/ha" },
+        { id: "4", nome: "Amendoim-bravo (Euphorbia heterophylla)", herbicida: "Aminol (2,4-D)", dose: "1,5 a 2,5 L/ha", volume: "15 L/ha" },
+        { id: "5", nome: "Dormideira (Mimosa pudica)", herbicida: "Tordon (2,4-D + Picloram)", dose: "3,0 a 4,0 L/ha", volume: "15 a 20 L/ha" },
+        { id: "68", nome: "Fumo-bravo (Solanum mauritianum)", herbicida: "Grazon (Aminopiralide + Triclopir)", dose: "2,5 a 3,5 L/ha", volume: "25 a 30 L/ha" },
+        { id: "69", nome: "Gema-de-ovo (Ludwigia octovalvis)", herbicida: "DMA 806 (2,4-D)", dose: "1,5 a 2,0 L/ha", volume: "15 a 20 L/ha" },
+        { id: "70", nome: "Aguapé (Eichhornia crassipes)", herbicida: "DMA 806 (2,4-D)", dose: "2,0 a 3,0 L/ha", volume: "20 a 25 L/ha" },
+        { id: "outro", nome: "Outro (Preencher Manualmente)...", herbicida: "", dose: "", volume: "" }
+    ];
+
+    // --- INICIALIZAÇÃO ---
+    window.onload = () => {
+        carregarEstados();
+        popularSelectDaninhas();
+        document.getElementById('dataApp').valueAsDate = new Date();
+    };
+
+    // --- NAVEGAÇÃO GAMIFICADA ---
+    function nextStep(atual, proximo) {
+        document.getElementById(`step${atual}`).classList.remove('active');
+        document.getElementById(`step${proximo}`).classList.add('active');
+    }
+
+    // --- API IBGE (ESTADOS E MUNICÍPIOS) ---
+    async function carregarEstados() {
+        try {
+            const res = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
+            const estados = await res.json();
+            const select = document.getElementById('estado');
+            select.innerHTML = '<option value="">Selecione o Estado (UF)...</option>';
+            estados.forEach(uf => {
+                select.innerHTML += `<option value="${uf.sigla}">${uf.nome} (${uf.sigla})</option>`;
+            });
+        } catch (e) {
+            console.error("Erro ao carregar IBGE:", e);
+        }
+    }
+
+    async function carregarMunicipios() {
+        const uf = document.getElementById('estado').value;
+        const select = document.getElementById('municipio');
+        if (!uf) {
+            select.innerHTML = '<option value="">Selecione o Estado primeiro</option>';
+            select.disabled = true;
+            return;
+        }
+        select.disabled = false;
+        select.innerHTML = '<option value="">Carregando...</option>';
+        try {
+            const res = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`);
+            const municipios = await res.json();
+            select.innerHTML = '<option value="">Selecione o Município...</option>';
+            municipios.forEach(m => {
+                select.innerHTML += `<option value="${m.nome}">${m.nome}</option>`;
+            });
+        } catch (e) {
+            console.error("Erro IBGE Municipios:", e);
+        }
+    }
+
+    // --- POPULAR DADOS DANINHAS ---
+    function popularSelectDaninhas() {
+        const select = document.getElementById('daninhaSelect');
+        bancoDaninhas.forEach(item => {
+            select.innerHTML += `<option value="${item.id}">${item.nome}</option>`;
+        });
+    }
+
+    function checkOutro() {
+        const val = document.getElementById('daninhaSelect').value;
+        if (val === 'outro') {
+            document.getElementById('divOutro').classList.remove('hidden');
+        } else {
+            document.getElementById('divOutro').classList.add('hidden');
+        }
+    }
+
+    // --- GERAR RELATÓRIO FINAL ---
+    let txtWhatsapp = "";
+
+    function gerarRelatorio() {
+        // Coletar Dados
+        const piloto = document.getElementById('piloto').value || "Não informado";
+        const fazenda = document.getElementById('fazenda').value || "Não informado";
+        const proprietario = document.getElementById('proprietario').value || "Não informado";
+        const data = document.getElementById('dataApp').value.split('-').reverse().join('/') || "Não informado";
+        const estado = document.getElementById('estado').value || "";
+        const municipio = document.getElementById('municipio').value || "";
+        const cultura = document.getElementById('cultura').value || "Não informado";
+        const clima = document.getElementById('clima').value || "Não informado";
+        
+        let alvo = "", herbicida = "", dose = "", volume = "";
+        
+        const daninhaId = document.getElementById('daninhaSelect').value;
+        if (daninhaId === 'outro') {
+            alvo = document.getElementById('daninhaOutro').value || "Não informado";
+            herbicida = "Conforme prescrição manual";
+            dose = "-";
+            volume = "Ajustar conforme manual Agras T25p";
+        } else {
+            const selecionada = bancoDaninhas.find(d => d.id === daninhaId);
+            if(selecionada){
+                alvo = selecionada.nome;
+                herbicida = selecionada.herbicida;
+                dose = selecionada.dose;
+                volume = selecionada.volume;
+            } else {
+                alvo = "Nenhum selecionado";
+            }
+        }
+
+        // Preencher DOM (Tela/Impressão)
+        document.getElementById('r_piloto').innerText = piloto;
+        document.getElementById('r_fazenda').innerText = fazenda;
+        document.getElementById('r_proprietario').innerText = proprietario;
+        document.getElementById('r_data').innerText = data;
+        document.getElementById('r_local').innerText = `${municipio} - ${estado}`;
+        document.getElementById('r_cultura').innerText = cultura;
+        document.getElementById('r_clima').innerText = clima;
+        document.getElementById('r_alvo').innerText = alvo;
+        document.getElementById('r_herbicida').innerText = herbicida;
+        document.getElementById('r_dose').innerText = dose;
+        document.getElementById('r_volume').innerText = volume;
+
+        // Montar string para o WhatsApp
+        txtWhatsapp = `*RELATÓRIO DE VOO - AGRAS T25P* 🚁\n\n` +
+                      `👨‍✈️ Piloto: ${piloto}\n` +
+                      `🚜 Fazenda: ${fazenda} | Prop: ${proprietario}\n` +
+                      `📍 Local: ${municipio}-${estado} | 📅 Data: ${data}\n` +
+                      `🌾 Pasto: ${cultura}\n` +
+                      `☀️ Clima: ${clima}\n\n` +
+                      `🎯 *ALVO*: ${alvo}\n` +
+                      `🧪 *PRODUTO*: ${herbicida}\n` +
+                      `💧 *DOSE*: ${dose}\n` +
+                      `🚿 *CALDA (Drone)*: ${volume}\n\n` +
+                      `⚠️ Ajustar bicos para gotas médias/grossas e usar adjuvante.`;
+
+        nextStep(3, 4);
+    }
+
+    // --- ENVIAR WHATSAPP ---
+    function enviarWhatsApp() {
+        const msgCodificada = encodeURIComponent(txtWhatsapp);
+        window.open(`https://wa.me/?text=${msgCodificada}`, '_blank');
+    }
+</script>
+
+</body>
+</html>
